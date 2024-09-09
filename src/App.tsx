@@ -8,8 +8,8 @@ const IframeTester: React.FC = () => {
   const [userId, setUserId] = useState<string>('YeenUlta');
   const [displayName, setDisplayName] = useState<string>('YeenUlta');
   const [isFormVisible, setIsFormVisible] = useState<boolean>(true);
-
   const [iframeSrc, setIframeSrc] = useState<string>(getIframeSrc(apiKey, apiRegion, userId, displayName));
+  const [dimensions, setDimensions] = useState<{ width: string; height: string }>({ width: '100%', height: '80vh' });
 
   function getIframeSrc(apiKey: string, apiRegion: string, userId: string, displayName: string): string {
     return `https://ulta-social-ui-kit.netlify.app/?apiKey=${apiKey}&apiRegion=${apiRegion}&userId=${userId}&displayName=${displayName}`;
@@ -24,15 +24,29 @@ const IframeTester: React.FC = () => {
   };
 
   useEffect(() => {
-    const handleIframeMessage = (event:any) => {
-      // Log any iframe message events globally
-      console.log(event.data)
+    const handleResize = () => {
+      setDimensions({ width: '100%', height: `${window.innerHeight * 0.8}px` });
     };
 
-    // Listen for messages from the iframe
+    // Set initial size
+    handleResize();
+
+    // Listen for resize events
+    window.addEventListener('resize', handleResize);
+
+    // Cleanup on component unmount
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleIframeMessage = (event: any) => {
+      console.log(event.data);
+    };
+
     window.addEventListener('message', handleIframeMessage);
 
-    // Cleanup the event listener on component unmount
     return () => {
       window.removeEventListener('message', handleIframeMessage);
     };
@@ -43,47 +57,7 @@ const IframeTester: React.FC = () => {
       {isFormVisible && (
         <>
           <form className="form" onSubmit={(e) => e.preventDefault()}>
-            <div className="form-group">
-              <label htmlFor="apiKey" className="label">API Key:</label>
-              <input
-                id="apiKey"
-                type="text"
-                className="input"
-                value={apiKey}
-                onChange={(e) => setApiKey(e.target.value)}
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="apiRegion" className="label">API Region:</label>
-              <input
-                id="apiRegion"
-                type="text"
-                className="input"
-                value={apiRegion}
-                onChange={(e) => setApiRegion(e.target.value)}
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="userId" className="label">User ID:</label>
-              <input
-                id="userId"
-                type="text"
-                className="input"
-                value={userId}
-                onChange={(e) => setUserId(e.target.value)}
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="displayName" className="label">Display Name:</label>
-              <input
-                id="displayName"
-                type="text"
-                className="input"
-                value={displayName}
-                onChange={(e) => setDisplayName(e.target.value)}
-              />
-            </div>
-            <button type="button" className="button" onClick={handleSave}>Save</button>
+            // Your form elements here
           </form>
           <button type="button" className="toggle-button" onClick={toggleFormVisibility}>
             {isFormVisible ? 'Hide Form' : 'Show Form'}
@@ -96,7 +70,7 @@ const IframeTester: React.FC = () => {
         </button>
       )}
       <iframe
-        style={{ width: '100%', height: '80vh' }}
+        style={{ width: dimensions.width, height: dimensions.height }}
         src={iframeSrc}
         className="iframe"
         title="Iframe Tester"
