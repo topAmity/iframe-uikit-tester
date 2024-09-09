@@ -25,11 +25,8 @@ const IframeTester: React.FC = () => {
 
   useEffect(() => {
     const handleIframeMessage = (event:any) => {
-      if (event.data === 'anonymousNeedsLogin') {
-        console.log(event.data)
-        // Prompt user to log in
-        // Logic to display login dialog should be implemented here
-      }
+      // Log any iframe message events globally
+      console.log(event.data)
     };
 
     // Listen for messages from the iframe
