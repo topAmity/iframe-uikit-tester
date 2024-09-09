@@ -1,6 +1,6 @@
 // src/components/IframeTester.tsx
 import React, { useEffect, useState, useRef } from 'react';
-import './IframeTester.css';
+import './App.css';
 
 const IframeTester: React.FC = () => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
