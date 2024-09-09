@@ -96,6 +96,7 @@ const IframeTester: React.FC = () => {
         </button>
       )}
       <iframe
+        style={{ width: '100%', height: '80vh' }}
         src={iframeSrc}
         className="iframe"
         title="Iframe Tester"
