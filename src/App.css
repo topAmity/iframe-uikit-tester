@@ -41,7 +41,7 @@
   box-shadow: 0 0 0 2px rgba(6, 190, 139, 0.2);
 }
 
-.button {
+.button, .toggle-button {
   padding: 10px 20px;
   border: none;
   border-radius: 4px;
@@ -52,7 +52,7 @@
   transition: background-color 0.3s;
 }
 
-.button:hover {
+.button:hover, .toggle-button:hover {
   background-color: #05a77d;
 }
 
@@ -64,18 +64,17 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-.toggle-button {
-  margin: 10px 0;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 4px;
-  background-color: #06be8b;
-  color: white;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
+@media (max-width: 768px) {
+  .form-group {
+    flex-direction: column;
+  }
 
-.toggle-button:hover {
-  background-color: #05a77d;
+  .container, .iframe {
+    height: auto; /* Adjust height on smaller screens */
+    padding: 10px;
+  }
+
+  .input, .button, .toggle-button {
+    font-size: 14px; /* Smaller font size on mobile */
+  }
 }
