@@ -1,35 +1,93 @@
 // src/components/IframeTester.tsx
 import React, { useEffect, useState } from 'react';
-import './App.css'; // Import the CSS file with responsive styles
+import './App.css'; // Make sure to import your CSS correctly
 
 const IframeTester: React.FC = () => {
-  // State declarations remain unchanged
-  // Add CSS in App.css for responsive design
+  const [apiKey, setApiKey] = useState<string>('b0efe90c3bdda2304d628918520c1688845889e4bc363d2c');
+  const [apiRegion, setApiRegion] = useState<string>('staging');
+  const [userId, setUserId] = useState<string>('YeenUlta');
+  const [displayName, setDisplayName] = useState<string>('YeenUlta');
+  const [isFormVisible, setIsFormVisible] = useState<boolean>(true);
+  const [iframeSrc, setIframeSrc] = useState<string>(getIframeSrc(apiKey, apiRegion, userId, displayName));
+
+  function getIframeSrc(apiKey: string, apiRegion: string, userId: string, displayName: string): string {
+    return `https://ulta-social-ui-kit.netlify.app/?apiKey=${apiKey}&apiRegion=${apiRegion}&userId=${userId}&displayName=${displayName}`;
+  }
+
+  const handleSave = () => {
+    setIframeSrc(getIframeSrc(apiKey, apiRegion, userId, displayName));
+  };
+
+  const toggleFormVisibility = () => {
+    setIsFormVisible(!isFormVisible);
+  };
 
   useEffect(() => {
-    // This effect is used to manage iframe and window resizing
-    const handleResize = () => {
-      // You might adjust other elements here as needed
+    const handleIframeMessage = (event: any) => {
+      console.log(event.data);
     };
 
-    // Call on initial load and setup event listener
-    handleResize();
-    window.addEventListener('resize', handleResize);
-
-    // Cleanup on component unmount
-    return () => window.removeEventListener('resize', handleResize);
+    window.addEventListener('message', handleIframeMessage);
+    return () => {
+      window.removeEventListener('message', handleIframeMessage);
+    };
   }, []);
-
-  // Other useEffect for message handling remains unchanged
 
   return (
     <div className="container">
-      {/* Toggling forms and showing forms are handled here */}
+      {isFormVisible && (
+        <form className="form" onSubmit={(e) => e.preventDefault()}>
+          <div className="form-group">
+            <label htmlFor="apiKey" className="label">API Key:</label>
+            <input
+              id="apiKey"
+              type="text"
+              className="input"
+              value={apiKey}
+              onChange={(e) => setApiKey(e.target.value)}
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="apiRegion" className="label">API Region:</label>
+            <input
+              id="apiRegion"
+              type="text"
+              className="input"
+              value={apiRegion}
+              onChange={(e) => setApiRegion(e.target.value)}
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="userId" className="label">User ID:</label>
+            <input
+              id="userId"
+              type="text"
+              className="input"
+              value={userId}
+              onChange={(e) => setUserId(e.target.value)}
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="displayName" className="label">Display Name:</label>
+            <input
+              id="displayName"
+              type="text"
+              className="input"
+              value={displayName}
+              onChange={(e) => setDisplayName(e.target.value)}
+            />
+          </div>
+          <button type="button" className="button" onClick={handleSave}>Save</button>
+        </form>
+      )}
+      <button type="button" className="toggle-button" onClick={toggleFormVisibility}>
+        {isFormVisible ? 'Hide Form' : 'Show Form'}
+      </button>
       <iframe
-        style={{ width: '100%', height: '80vh' }}
-        src={iframeSrc}
         className="iframe"
+        src={iframeSrc}
         title="Iframe Tester"
+        style={{ width: '100%', height: '88%' }}  // Adjusted to use the class-defined styles
       />
     </div>
   );
