@@ -1,22 +1,33 @@
 // src/components/IframeTester.tsx
 import React, { useEffect, useState } from 'react';
 import './App.css'; // Import the CSS file
-
+import logo from './sandbox.png'
 const IframeTester: React.FC = () => {
-  const [apiKey, setApiKey] = useState<string>('b0efe90c3bdda2304d628918520c1688845889e4bc363d2c');
-  const [apiRegion, setApiRegion] = useState<string>('staging');
-  const [userId, setUserId] = useState<string>('YeenUlta');
-  const [displayName, setDisplayName] = useState<string>('YeenUlta');
+  const [apiKey, setApiKey] = useState<string>('');
+  const [apiRegion, setApiRegion] = useState<string>('');
+  const [userId, setUserId] = useState<string>('');
+  const [displayName, setDisplayName] = useState<string>('');
   const [isFormVisible, setIsFormVisible] = useState<boolean>(true);
 
   const [iframeSrc, setIframeSrc] = useState<string>(getIframeSrc(apiKey, apiRegion, userId, displayName));
 
+  useEffect(() => {
+
+    const queryParams = new URLSearchParams(window.location.search);
+
+    setApiKey(queryParams.get("apiKey") as string);
+
+    setApiRegion(queryParams.get("apiRegion") as string);
+
+
+  }, []);
   function getIframeSrc(apiKey: string, apiRegion: string, userId: string, displayName: string): string {
-    return `https://ulta-social-ui-kit.netlify.app/?apiKey=${apiKey}&apiRegion=${apiRegion}&userId=${userId}&displayName=${displayName}`;
+    return `https://social-plus-web-ui-kit.netlify.app/?apiKey=${apiKey}&apiRegion=${apiRegion}&userId=${userId}&displayName=${displayName}`;
   }
 
   const handleSave = () => {
     setIframeSrc(getIframeSrc(apiKey, apiRegion, userId, displayName));
+    setIsFormVisible(false)
   };
 
   const toggleFormVisibility = () => {
@@ -24,7 +35,7 @@ const IframeTester: React.FC = () => {
   };
 
   useEffect(() => {
-    const handleIframeMessage = (event:any) => {
+    const handleIframeMessage = (event: any) => {
       // Log any iframe message events globally
       console.log(event.data)
     };
@@ -83,23 +94,34 @@ const IframeTester: React.FC = () => {
                 onChange={(e) => setDisplayName(e.target.value)}
               />
             </div>
-            <button type="button" className="button" onClick={handleSave}>Save</button>
+            <button disabled={!(apiKey && apiRegion && userId && displayName)} type="button" className="button" onClick={handleSave}>Log In</button>
           </form>
-          <button type="button" className="toggle-button" onClick={toggleFormVisibility}>
+          <div style={{display:'flex', justifyContent:'center'}}>
+          <img src={logo} width={310} height={300}/>
+          </div>
+     
+          {/* <button type="button" className="toggle-button" onClick={toggleFormVisibility}>
             {isFormVisible ? 'Hide Form' : 'Show Form'}
-          </button>
+          </button> */}
         </>
       )}
       {!isFormVisible && (
-        <button type="button" className="toggle-button" onClick={toggleFormVisibility}>
-          Show Form
+        <button
+          type="button"
+          className="toggle-button"
+          onClick={toggleFormVisibility}
+        >
+          Log out
         </button>
       )}
-      <iframe
-        src={iframeSrc}
-        className="iframe"
-        title="Iframe Tester"
-      />
+      {!isFormVisible && apiKey && userId && apiRegion &&
+        <iframe
+          src={iframeSrc}
+          className="iframe"
+          title="Iframe Tester"
+        />
+      }
+
     </div>
   );
 };
